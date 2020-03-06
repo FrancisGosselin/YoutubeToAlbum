@@ -5,7 +5,7 @@ from pathlib import Path
 import pafy
 import sys
 import numpy as np
-
+from urllib import parse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('url', help="Youtube URL of the playlist")
@@ -17,7 +17,12 @@ parser.add_argument('--artist', action='store', dest='artist', help='artist')
 
 args = parser.parse_args()
 
-playlist = pafy.get_playlist(args.url)
+try:
+    playlist = pafy.get_playlist(args.url)
+except:
+    print('ERROR: the playlist: ' + args.url + ' does not exist')
+    sys.exit(0)
+
 
 print("Collecting playlist information ...")
 streams = [ item["pafy"].getbestaudio() for item in playlist['items'] ]
@@ -74,7 +79,9 @@ for file in files:
         path = '/'.join(file.split('/')[:-1])
         filename = '.'.join(file.split('/')[-1].split('.')[:-1])
 
-        new_filename = input(filename + " --> ")
+        input_name = input(filename + " --> ")
+        new_filename = input_name if input_name != '' else filename
+
         new_file =  path + '/' + new_filename + ".mp3"
         os.rename(file, new_file)
 
