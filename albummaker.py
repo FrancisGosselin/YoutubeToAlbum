@@ -6,6 +6,7 @@ import pafy
 import sys
 import numpy as np
 from urllib import parse
+from youtubesearchpython import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('url', help="Youtube URL of the playlist")
@@ -18,14 +19,14 @@ parser.add_argument('--artist', action='store', dest='artist', help='artist')
 args = parser.parse_args()
 
 try:
-    playlist = pafy.get_playlist(args.url)
+    playlist = Playlist('https://www.youtube.com/playlist?list=PLApq2HiROuoUkg1qtHMXt_qGYRjoPSXbX')
 except:
     print('ERROR: the playlist: ' + args.url + ' does not exist')
     sys.exit(0)
 
 
 print("Collecting playlist information ...")
-streams = [ item["pafy"].getbestaudio() for item in playlist['items'] ]
+streams = [ pafy.new(video["link"]).getbestaudio() for video in playlist.videos ]
 print("Downloading " + str(len(streams)) + " music files ...")
 
 old_files = []
